@@ -20,6 +20,7 @@ package zeldaswordskills.client.particle;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.EntityFX;
 import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
@@ -63,6 +64,13 @@ public class ModParticle extends EntityFX {
 		this.motionX = velX;
 		this.motionY = velY;
 		this.motionZ = velZ;
+		TextureAtlasSprite sprite = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(modParticles.toString());
+		setParticleIcon(sprite);
+	}
+
+	@Override
+	public int getFXLayer() {
+		return 1;
 	}
 
 	@Override
@@ -110,6 +118,12 @@ public class ModParticle extends EntityFX {
 			remainingIconStages -= firstStage;
 		}
 		setParticleTextureIndex(initialIconIndex);
+	}
+
+	@Override // avoids exception, but still doesn't render the cyclone particles
+	public void setParticleTextureIndex(int particleTextureIndex) {
+		this.particleTextureIndexX = particleTextureIndex % 16;
+		this.particleTextureIndexY = particleTextureIndex / 16;
 	}
 
 	protected void setAnimated(boolean value) {
