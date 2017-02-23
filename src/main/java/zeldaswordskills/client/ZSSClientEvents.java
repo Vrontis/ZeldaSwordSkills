@@ -141,7 +141,7 @@ public class ZSSClientEvents
 		for (int i = 0; i < 10; ++i) {
 			event.map.registerSprite(new ResourceLocation(ModInfo.ID, digit + i));
 		}
-		event.map.registerSprite(new ResourceLocation(ModInfo.ID, "particles"));
+		event.map.registerSprite(new ResourceLocation(ModInfo.ID + ":entity/cyclone"));
 	}
 
 	/**

@@ -35,7 +35,7 @@ import zeldaswordskills.ref.ModInfo;
  */
 public class ModParticle extends EntityFX {
 	/** This sprite sheet must be strictly 16 by 16 icons, any resolution. */
-	public static final ResourceLocation modParticles = new ResourceLocation(ModInfo.ID, "textures/particles.png");
+	public static final ResourceLocation modParticles = new ResourceLocation(ModInfo.ID, "textures/entity/cyclone.png");
 	public static final ResourceLocation minecraftParticles = new ResourceLocation("textures/particle/particles.png");
 
 	/** Total number of frames in the sequence. */
@@ -140,6 +140,45 @@ public class ModParticle extends EntityFX {
 	}
 
 	@Override
+	public void renderParticle(WorldRenderer worldRenderer, Entity entity, float partialTick,
+			float edgeLRdirectionX, float edgeUDdirectionY, float edgeLRdirectionZ,
+			float edgeUDdirectionX, float edgeUDdirectionZ)
+	{
+		Minecraft.getMinecraft().renderEngine.bindTexture(modParticles);
+		// TODO modify min's and max's based on icon index
+		double minU = this.particleIcon.getMinU();
+		double maxU = this.particleIcon.getMaxU();
+		double minV = this.particleIcon.getMinV();
+		double maxV = this.particleIcon.getMaxV();
+		double scale = 0.1F * this.particleScale;  // vanilla scaling factor
+		final double scaleLR = scale;
+		final double scaleUD = scale;
+		double x = this.prevPosX + (this.posX - this.prevPosX) * partialTick - interpPosX;
+		double y = this.prevPosY + (this.posY - this.prevPosY) * partialTick - interpPosY;
+		double z = this.prevPosZ + (this.posZ - this.prevPosZ) * partialTick - interpPosZ;
+		worldRenderer.setColorRGBA_F(this.particleRed, this.particleGreen, this.particleBlue, this.particleAlpha);
+		worldRenderer.addVertexWithUV(x - edgeLRdirectionX * scaleLR - edgeUDdirectionX * scaleUD,
+				y - edgeUDdirectionY * scaleUD,
+				z - edgeLRdirectionZ * scaleLR - edgeUDdirectionZ * scaleUD,
+				maxU, maxV);
+		worldRenderer.addVertexWithUV(x - edgeLRdirectionX * scaleLR + edgeUDdirectionX * scaleUD,
+				y + edgeUDdirectionY * scaleUD,
+				z - edgeLRdirectionZ * scaleLR + edgeUDdirectionZ * scaleUD,
+				maxU, minV);
+		worldRenderer.addVertexWithUV(x + edgeLRdirectionX * scaleLR + edgeUDdirectionX * scaleUD,
+				y + edgeUDdirectionY * scaleUD,
+				z + edgeLRdirectionZ * scaleLR + edgeUDdirectionZ * scaleUD,
+				minU, minV);
+		worldRenderer.addVertexWithUV(x + edgeLRdirectionX * scaleLR - edgeUDdirectionX * scaleUD,
+				y - edgeUDdirectionY * scaleUD,
+				z + edgeLRdirectionZ * scaleLR - edgeUDdirectionZ * scaleUD,
+				minU, maxV);
+		// TODO this works, but the digging effects don't look nearly as good as they used to
+		Minecraft.getMinecraft().renderEngine.bindTexture(minecraftParticles);
+	}
+
+	/*
+	@Override
 	public void renderParticle(WorldRenderer renderer, Entity entity, float partialTick, float rotX, float rotXZ, float rotZ, float rotYZ, float rotXY) {
 		renderer.finishDrawing();
 		Minecraft.getMinecraft().renderEngine.bindTexture(modParticles);
@@ -150,6 +189,7 @@ public class ModParticle extends EntityFX {
 		renderer.startDrawingQuads();
 		Minecraft.getMinecraft().renderEngine.bindTexture(minecraftParticles);
 	}
+	 */
 
 	@Override
 	public void onUpdate() {
